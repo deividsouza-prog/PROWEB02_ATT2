@@ -1,12 +1,13 @@
+import { Repository } from 'typeorm';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
 import { UpdateTarefaDto } from './dto/update-tarefa.dto';
 import { Tarefa } from './entities/tarefa.entity';
 export declare class TarefasService {
-    private tarefas;
-    private proximoId;
-    findAll(projetoId?: number): Tarefa[];
-    findOne(id: number): Tarefa;
-    create(dto: CreateTarefaDto): Tarefa;
-    update(id: number, dto: UpdateTarefaDto): Tarefa;
-    remove(id: number): void;
+    private readonly tarefaRepo;
+    constructor(tarefaRepo: Repository<Tarefa>);
+    findAll(projetoId?: number): Promise<Tarefa[]>;
+    findOne(id: number): Promise<Tarefa>;
+    create(dto: CreateTarefaDto): Promise<Tarefa>;
+    update(id: number, dto: UpdateTarefaDto): Promise<Tarefa>;
+    remove(id: number): Promise<void>;
 }

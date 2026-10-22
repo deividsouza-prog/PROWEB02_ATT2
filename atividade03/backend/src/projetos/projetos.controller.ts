@@ -45,6 +45,6 @@ export class ProjetosController {
   @Delete(':id')
   @HttpCode(204) // 204 No Content: sucesso sem corpo na resposta
   remove(@Param('id', ParseIntPipe) id: number) {
-    this.projetosService.remove(id);
+    return this.projetosService.remove(id);
   }
 }

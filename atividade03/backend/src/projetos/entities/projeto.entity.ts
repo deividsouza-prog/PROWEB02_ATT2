@@ -1,7 +1,16 @@
-// Representa um projeto na nossa "base em memória".
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity('projetos')
 export class Projeto {
+  @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
   nome: string;
+
+  @Column({ type: 'text', nullable: true })
   descricao?: string;
+
+  @Column()
   cor: string;
 }

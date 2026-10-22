@@ -4,9 +4,9 @@ import { TarefasService } from './tarefas.service';
 export declare class TarefasController {
     private readonly tarefasService;
     constructor(tarefasService: TarefasService);
-    findAll(projetoId?: string): import("./entities/tarefa.entity").Tarefa[];
-    findOne(id: number): import("./entities/tarefa.entity").Tarefa;
-    create(dto: CreateTarefaDto): import("./entities/tarefa.entity").Tarefa;
-    update(id: number, dto: UpdateTarefaDto): import("./entities/tarefa.entity").Tarefa;
-    remove(id: number): void;
+    findAll(projetoId?: string): Promise<import("./entities/tarefa.entity").Tarefa[]>;
+    findOne(id: number): Promise<import("./entities/tarefa.entity").Tarefa>;
+    create(dto: CreateTarefaDto): Promise<import("./entities/tarefa.entity").Tarefa>;
+    update(id: number, dto: UpdateTarefaDto): Promise<import("./entities/tarefa.entity").Tarefa>;
+    remove(id: number): Promise<void>;
 }

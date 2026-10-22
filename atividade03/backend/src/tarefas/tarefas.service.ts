@@ -1,55 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
 import { UpdateTarefaDto } from './dto/update-tarefa.dto';
 import { Tarefa } from './entities/tarefa.entity';
 
-// @Injectable marca a classe como um "provider": o Nest sabe criar e injetar
-// esta instância onde ela for pedida (ex.: no construtor do controller).
 @Injectable()
 export class TarefasService {
-  // "Banco de dados" em memória (por enquanto). Some ao reiniciar o servidor.
-  private tarefas: Tarefa[] = [
-    { id: 1, titulo: 'Estudar NestJS', descricao: 'Módulos, controllers e services', concluida: false },
-    { id: 2, titulo: 'Preparar a aula de hoje', concluida: true },
-  ];
-  private proximoId = 3;
+  constructor(
+    @InjectRepository(Tarefa)
+    private readonly tarefaRepo: Repository<Tarefa>,
+  ) {}
 
-  findAll(projetoId?: number): Tarefa[] {
-    if (projetoId === undefined) {
-      return this.tarefas;
-    }
-    return this.tarefas.filter((t) => t.projetoId === projetoId);
+  // Sem projetoId -> todas; com projetoId -> só as tarefas daquele projeto.
+  findAll(projetoId?: number): Promise<Tarefa[]> {
+    return this.tarefaRepo.find({
+      where: projetoId === undefined ? {} : { projetoId },
+      order: { id: 'ASC' },
+    });
   }
 
-  findOne(id: number): Tarefa {
-    const tarefa = this.tarefas.find((t) => t.id === id);
-    if (!tarefa) {
-      // NotFoundException vira automaticamente uma resposta HTTP 404.
-      throw new NotFoundException('Tarefa não encontrada');
-    }
+  async findOne(id: number): Promise<Tarefa> {
+    const tarefa = await this.tarefaRepo.findOneBy({ id });
+    if (!tarefa) throw new NotFoundException('Tarefa não encontrada');
     return tarefa;
   }
 
-  create(dto: CreateTarefaDto): Tarefa {
-    const nova: Tarefa = {
-      id: this.proximoId++,
-      titulo: dto.titulo,
-      descricao: dto.descricao,
-      concluida: false,
-      projetoId: dto.projetoId,
-    };
-    this.tarefas.push(nova);
-    return nova;
+  create(dto: CreateTarefaDto): Promise<Tarefa> {
+    const tarefa = this.tarefaRepo.create(dto);
+    return this.tarefaRepo.save(tarefa);
   }
 
-  update(id: number, dto: UpdateTarefaDto): Tarefa {
-    const tarefa = this.findOne(id);
-    Object.assign(tarefa, dto); // atualiza apenas os campos enviados
-    return tarefa;
+  async update(id: number, dto: UpdateTarefaDto): Promise<Tarefa> {
+    const tarefa = await this.findOne(id);
+    Object.assign(tarefa, dto);
+    return this.tarefaRepo.save(tarefa);
   }
 
-  remove(id: number): void {
-    const tarefa = this.findOne(id);
-    this.tarefas = this.tarefas.filter((t) => t.id !== tarefa.id);
+  async remove(id: number): Promise<void> {
+    const tarefa = await this.findOne(id);
+    await this.tarefaRepo.remove(tarefa);
   }
 }

@@ -34,7 +34,7 @@ let ProjetosController = class ProjetosController {
         return this.projetosService.update(id, dto);
     }
     remove(id) {
-        this.projetosService.remove(id);
+        return this.projetosService.remove(id);
     }
 };
 exports.ProjetosController = ProjetosController;

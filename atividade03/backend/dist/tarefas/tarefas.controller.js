@@ -41,7 +41,7 @@ let TarefasController = class TarefasController {
         return this.tarefasService.update(id, dto);
     }
     remove(id) {
-        this.tarefasService.remove(id);
+        return this.tarefasService.remove(id);
     }
 };
 exports.TarefasController = TarefasController;
